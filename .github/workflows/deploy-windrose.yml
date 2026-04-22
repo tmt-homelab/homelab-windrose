@@ -21,7 +21,7 @@ jobs:
           OP_CONNECT_HOST: ${{ secrets.OP_CONNECT_HOST }}
           OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN }}
           POSTGRES_PASSWORD: "op://Homelab/homelab-windrose-db/postgres_password"
-          SESSION_SECRET: "op://Homelab/homelab-windrose-session/session_secret"
+          SESSION_SECRET: "op://Homelab/homelab-windrose-session/secret"
           SEARXNG_SECRET: "op://Homelab/homelab-windrose-searxng/searxng_secret"
       
       - name: Copy stack files

@@ -20,7 +20,7 @@ jobs:
         env:
           OP_CONNECT_HOST: ${{ secrets.OP_CONNECT_HOST }}
           OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN }}
-          POSTGRES_PASSWORD: "op://Homelab/homelab-windrose-db/postgres_password"
+          POSTGRES_PASSWORD: "op://Homelab/homelab-windrose-db/password"
           SESSION_SECRET: "op://Homelab/homelab-windrose-session/secret"
           SEARXNG_SECRET: "op://Homelab/homelab-windrose-searxng/searxng_secret"
       

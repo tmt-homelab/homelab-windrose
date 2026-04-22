@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths: ['stacks/windrose/**']
+  workflow_dispatch:
 
 jobs:
   deploy:

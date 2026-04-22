@@ -3,11 +3,11 @@ name: Deploy Windrose
 on:
   push:
     branches: [main]
-    paths: ['stacks/windrose/**']
+    paths: ['stacks/windrose/**', '**/Dockerfile', '**/package.json', '**/next.config.js']
   workflow_dispatch:
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: [self-hosted, Linux, X64]
     
     steps:
@@ -16,6 +16,12 @@ jobs:
       - name: Log in to GHCR
         run: |
           echo "${{ secrets.GHCR_PAT }}" | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      
+      - name: Build and push image
+        run: |
+          cd /Users/tmiller/git/overlabbed-com/windrose
+          sudo docker build -t ghcr.io/${{ github.repository_owner }}/windrose:latest .
+          sudo docker push ghcr.io/${{ github.repository_owner }}/windrose:latest
       
       - name: Load secrets from 1Password
         uses: 1password/load-secrets-action@v2

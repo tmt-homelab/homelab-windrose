@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: [self-hosted, dockp01]
+    runs-on: [self-hosted, Linux, X64]
     
     steps:
       - uses: actions/checkout@v4

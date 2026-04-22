@@ -1,0 +1,47 @@
+name: Deploy Windrose
+
+on:
+  push:
+    branches: [main]
+    paths: ['stacks/windrose/**']
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, dockp01]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Load secrets from 1Password
+        uses: 1password/load-secrets-action@v2
+        with:
+          export-env: false
+        env:
+          OP_CONNECT_HOST: ${{ secrets.OP_CONNECT_HOST }}
+          OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN }}
+          POSTGRES_PASSWORD: "op://Homelab/homelab-windrose-db/postgres_password"
+          SESSION_SECRET: "op://Homelab/homelab-windrose-session/session_secret"
+          SEARXNG_SECRET: "op://Homelab/homelab-windrose-searxng/searxng_secret"
+      
+      - name: Copy stack files
+        run: |
+          sudo cp stacks/windrose/docker-compose.yml /mnt/docker/stacks/windrose/
+          
+      - name: Write .env file
+        run: |
+          printf 'POSTGRES_PASSWORD=%s\nSESSION_SECRET=%s\nSEARXNG_SECRET=%s\n' \
+            "$POSTGRES_PASSWORD" "$SESSION_SECRET" "$SEARXNG_SECRET" | \
+            sudo tee /mnt/docker/stacks/windrose/.env > /dev/null
+          sudo chown github-runner:docker /mnt/docker/stacks/windrose/.env
+          sudo chmod 640 /mnt/docker/stacks/windrose/.env
+      
+      - name: Pull and deploy
+        run: |
+          cd /mnt/docker/stacks/windrose
+          sudo docker compose pull --quiet
+          sudo docker compose up -d --remove-orphans
+      
+      - name: Verify health
+        run: |
+          sleep 30
+          sudo docker inspect windrose --format '{{.State.Health.Status}}'
